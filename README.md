@@ -87,3 +87,26 @@ Replace placeholder PDFs inside:
 ```text
 public/whitepapers/
 ```
+
+
+## Railway build fix
+
+This package includes `nixpacks.toml` to force:
+
+```text
+Node.js 20
+Python 3.11
+gcc
+gnumake
+pkg-config
+```
+
+This fixes the Railway error where Node 24 was selected and `better-sqlite3` failed during native build.
+
+If Railway still uses Node 24, manually add this Railway variable:
+
+```text
+NODE_VERSION=20
+```
+
+Then redeploy.
