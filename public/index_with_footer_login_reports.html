@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whitepapers | Truflux Technologies</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --text: #f7fbff;
+      --muted: #aab8cc;
+      --accent: #28d3c1;
+      --accent-2: #6aa8ff;
+      --shadow: 0 24px 70px rgba(0,0,0,.35);
+      --danger: #c0392b;
+      --success: #118a6c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(40,211,193,.16), transparent 32%),
+        radial-gradient(circle at 88% 14%, rgba(106,168,255,.22), transparent 36%),
+        linear-gradient(180deg, #07111f 0%, #09172a 46%, #f5f8fc 46%, #f5f8fc 100%);
+      color: var(--text);
+    }
+    .nav, .hero, .section, .cta-band, footer { max-width: 1180px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+    .nav { padding-top: 26px; padding-bottom: 26px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -.03em; font-size: 22px; }
+    .brand-mark { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 12px 30px rgba(40,211,193,.28); }
+    .nav-links { display: flex; gap: 26px; color: var(--muted); font-size: 14px; }
+    .nav-links a { color: inherit; text-decoration: none; }
+    .hero { padding-top: 54px; padding-bottom: 90px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 42px; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; color: #dce8f8; background: rgba(255,255,255,.07); font-size: 13px; margin-bottom: 22px; }
+    .status-dot { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 22px var(--accent); }
+    .hero h1 { font-size: clamp(42px, 6vw, 74px); line-height: .94; letter-spacing: -.065em; margin: 0 0 22px; }
+    .hero p { color: var(--muted); font-size: 18px; line-height: 1.7; max-width: 680px; margin: 0 0 34px; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 20px; border-radius: 999px; font-weight: 700; text-decoration: none; border: 1px solid transparent; transition: .2s; cursor: pointer; font: inherit; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #04101c; box-shadow: 0 18px 45px rgba(40,211,193,.28); }
+    .btn-secondary { color: #fff; border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.06); }
+    .insight-panel { border: 1px solid rgba(255,255,255,.14); background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.045)); border-radius: 30px; padding: 28px; box-shadow: var(--shadow); backdrop-filter: blur(18px); }
+    .panel-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .metric { padding: 22px; border-radius: 22px; background: rgba(255,255,255,.08); margin-bottom: 14px; border: 1px solid rgba(255,255,255,.1); }
+    .metric strong { display: block; font-size: 34px; letter-spacing: -.05em; }
+    .metric span { display: block; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+    .section { margin-top: -42px; padding-bottom: 90px; color: #0b1728; }
+    .section-head { display: flex; justify-content: space-between; gap: 28px; align-items: flex-end; margin-bottom: 28px; }
+    .section h2 { font-size: clamp(32px, 4vw, 48px); line-height: 1; letter-spacing: -.055em; margin: 0; }
+    .section-head p { max-width: 440px; color: #617089; line-height: 1.65; margin: 0; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .paper-card { background: #fff; border-radius: 28px; padding: 26px; box-shadow: 0 18px 44px rgba(9,23,42,.08); border: 1px solid #e6ecf4; min-height: 320px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .paper-card::before { content: ""; position: absolute; inset: 0 0 auto; height: 5px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+    .tag { width: fit-content; border-radius: 999px; padding: 7px 11px; background: #edf7ff; color: #176a88; font-size: 12px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; margin-bottom: 22px; }
+    .paper-card h3 { margin: 0 0 14px; font-size: 24px; line-height: 1.12; letter-spacing: -.04em; color: #07111f; }
+    .paper-card p { color: #617089; line-height: 1.65; margin: 0 0 22px; flex: 1; }
+    .paper-meta { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 18px; border-top: 1px solid #edf1f6; color: #7b8798; font-size: 14px; }
+    .download { color: #075fbc; font-weight: 800; text-decoration: none; border: 0; background: transparent; padding: 0; font: inherit; cursor: pointer; white-space: nowrap; }
+    .feature-card { grid-column: span 2; background: linear-gradient(135deg, #07111f, #102f53); color: #fff; border-color: transparent; }
+    .feature-card h3 { color: #fff; font-size: 34px; max-width: 580px; }
+    .feature-card p { color: #bdd0e7; max-width: 620px; }
+    .feature-card .paper-meta { border-color: rgba(255,255,255,.14); color: #bdd0e7; }
+    .feature-card .download { color: #63e9dc; }
+    .cta-band { margin-bottom: 70px; }
+    .cta-inner { border-radius: 34px; background: #07111f; color: white; padding: 42px; display: flex; align-items: center; justify-content: space-between; gap: 30px; box-shadow: var(--shadow); }
+    .cta-inner h2 { margin: 0 0 10px; font-size: 34px; letter-spacing: -.045em; }
+    .cta-inner p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(4,11,20,.78); backdrop-filter: blur(10px); }
+    .modal.active { display: flex; }
+    .modal-card { width: min(620px, 100%); background: #fff; color: #07111f; border-radius: 30px; box-shadow: var(--shadow); overflow: hidden; }
+    .modal-head { padding: 28px 30px; background: linear-gradient(135deg, #07111f, #12365e); color: white; position: relative; }
+    .modal-head h2 { margin: 0 36px 8px 0; font-size: 28px; letter-spacing: -.04em; line-height: 1.1; }
+    .modal-head p { margin: 0; color: #bdd0e7; line-height: 1.5; }
+    .close-btn { position: absolute; right: 22px; top: 20px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); color: white; font-size: 22px; cursor: pointer; }
+    .lead-form { padding: 28px 30px 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-field { display: flex; flex-direction: column; gap: 8px; }
+    .form-field.full, .form-note, .form-status, .form-actions { grid-column: span 2; }
+    label { font-size: 13px; font-weight: 800; color: #35445a; }
+    input, select { width: 100%; min-height: 46px; border-radius: 14px; border: 1px solid #d9e2ee; padding: 0 14px; font: inherit; color: #07111f; background: #fbfdff; outline: none; }
+    input:focus, select:focus { border-color: var(--accent-2); box-shadow: 0 0 0 4px rgba(106,168,255,.13); }
+    .form-note, .form-status { color: #6b7890; font-size: 13px; line-height: 1.5; margin-top: -4px; }
+    .form-status { display: none; padding: 12px 14px; border-radius: 14px; margin: 0; }
+    .form-status.active { display: block; }
+    .form-status.error { background: #fff1ef; color: var(--danger); }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; align-items: center; padding-top: 4px; }
+    .form-actions .btn-secondary { color: #07111f; border-color: #d9e2ee; background: #fff; }
+    .success-state { display: none; padding: 30px; text-align: center; }
+    .success-state.active { display: block; }
+    .lead-form.hidden { display: none; }
+    .success-icon { width: 64px; height: 64px; border-radius: 22px; margin: 0 auto 18px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #04101c; font-size: 34px; font-weight: 900; }
+    .success-state h3 { margin: 0 0 10px; font-size: 28px; letter-spacing: -.04em; }
+    .success-state p { color: #617089; line-height: 1.65; margin: 0 0 22px; }
+    footer { padding-top: 32px; padding-bottom: 44px; color: #728096; display: flex; justify-content: space-between; gap: 20px; font-size: 14px; }
+
+    .login-link { color: #075fbc; font-weight: 800; text-decoration: none; border: 0; background: transparent; cursor: pointer; font: inherit; }
+    .modal-card.report-card { width: min(1120px, 100%); max-height: 92vh; overflow: auto; }
+    .report-login { padding: 28px 30px 30px; display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .report-login.hidden { display: none; }
+    .report-content { display: none; padding: 26px 30px 30px; }
+    .report-content.active { display: block; }
+    .report-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+    .report-actions .btn-secondary { color: #07111f; border-color: #d9e2ee; background: #fff; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    .stat { background: #f6f8ff; border: 1px solid #e5e9fb; border-radius: 18px; padding: 16px; }
+    .stat strong { display: block; font-size: 28px; letter-spacing: -.04em; color: #07111f; }
+    .stat span { color: #617089; font-size: 13px; }
+    .report-section-title { margin: 26px 0 10px; font-size: 21px; color: #07111f; }
+    .table-wrap { overflow: auto; border: 1px solid #e5e9fb; border-radius: 18px; margin: 14px 0 28px; }
+    table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 13px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid #eef1fb; text-align: left; vertical-align: top; }
+    th { background: #f6f8ff; color: #102f53; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    td { color: #46506e; }
+
+    @media (max-width: 920px) {
+      .hero, .grid { grid-template-columns: 1fr; }
+      .feature-card { grid-column: span 1; }
+      .section-head, .cta-inner, footer { flex-direction: column; align-items: flex-start; }
+      .nav-links { display: none; }
+      .section { margin-top: -20px; }
+      .lead-form { grid-template-columns: 1fr; }
+      .form-field.full, .form-note, .form-status, .form-actions { grid-column: span 1; }
+      .form-actions { justify-content: stretch; flex-direction: column-reverse; }
+      .form-actions .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="brand"><span class="brand-mark"></span> Truflux Technologies</div>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#whitepapers">Whitepapers</a>
+      <a href="#insights">Insights</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <div class="eyebrow"><span class="status-dot"></span> Enterprise Insights Library</div>
+        <h1>Thinking that helps leaders build AI-ready enterprises.</h1>
+        <p>Explore Truflux whitepapers on data democratization, model routing, code modernization, and sovereign data governance — written for CIOs, technology leaders, and transformation teams preparing for the next wave of enterprise intelligence.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#whitepapers">Explore Whitepapers</a>
+          <button class="btn btn-secondary consultation-btn" data-request="Request a Consultation">Request a Consultation</button>
+        </div>
+      </div>
+
+      <aside class="insight-panel" id="insights">
+        <div class="panel-top">
+          <strong>Truflux Point of View</strong>
+          <span class="status-dot"></span>
+        </div>
+        <div class="metric"><strong>AI + Data</strong><span>Enterprise AI succeeds when platforms, data, workflows, and governance operate as one foundation.</span></div>
+        <div class="metric"><strong>CIO Ready</strong><span>Each paper is structured for boardroom clarity, operating model impact, and execution-led transformation.</span></div>
+        <div class="metric"><strong>Built for Scale</strong><span>From architecture decisions to governance models, the focus is measurable business performance.</span></div>
+      </aside>
+    </section>
+
+    <section class="section" id="whitepapers">
+      <div class="grid">
+        <article class="paper-card feature-card">
+          <div class="tag">Executive Summary</div>
+          <h3>Data Democratization: Executive Summary</h3>
+          <p>A concise leadership briefing on how trusted, accessible, governed data can accelerate decision-making, improve business agility, and create the operating foundation for enterprise AI.</p>
+          <div class="paper-meta"><span>5–7 min read</span><button class="download" data-paper="Data Democratization: Executive Summary" data-file="/whitepapers/data-democratization-executive-summary.pdf">Download PDF →</button></div>
+        </article>
+
+        <article class="paper-card">
+          <div class="tag">Deep Dive</div>
+          <h3>Data Democratization: A Detailed Analysis</h3>
+          <p>A practical analysis of data ownership, access models, governance, self-service analytics, cataloging, quality, and the cultural shift required to make data usable across the enterprise.</p>
+          <div class="paper-meta"><span>Detailed paper</span><button class="download" data-paper="Data Democratization: A Detailed Analysis" data-file="/whitepapers/data-democratization-detailed-analysis.pdf">Download PDF →</button></div>
+        </article>
+
+        <article class="paper-card">
+          <div class="tag">AI Strategy</div>
+          <h3>Model Routing: A Strategic Advantage CIOs Should Leverage</h3>
+          <p>Why model routing is becoming a core enterprise capability — helping CIOs balance cost, performance, privacy, reliability, latency, and business context across AI workloads.</p>
+          <div class="paper-meta"><span>CIO brief</span><button class="download" data-paper="Model Routing: A Strategic Advantage CIOs Should Leverage" data-file="/whitepapers/model-routing-cio-strategic-advantage.pdf">Download PDF →</button></div>
+        </article>
+
+        <article class="paper-card">
+          <div class="tag">Modernization</div>
+          <h3>Code Modernization: The Next Big Wave</h3>
+          <p>How enterprises can use AI-assisted engineering, platform refactoring, technical debt reduction, and legacy transformation to unlock speed, resilience, and lower operating cost.</p>
+          <div class="paper-meta"><span>Technology insight</span><button class="download" data-paper="Code Modernization: The Next Big Wave" data-file="/whitepapers/code-modernization-next-big-wave.pdf">Download PDF →</button></div>
+        </article>
+
+        <article class="paper-card">
+          <div class="tag">Governance</div>
+          <h3>Data Constitution: Sovereign Data and Implications</h3>
+          <p>A strategic view of sovereign data, regulatory implications, enterprise controls, jurisdiction-aware architectures, and the need for a data constitution that protects value and trust.</p>
+          <div class="paper-meta"><span>Governance paper</span><button class="download" data-paper="Data Constitution: Sovereign Data and Implications" data-file="/whitepapers/data-constitution-sovereign-data.pdf">Download PDF →</button></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="cta-band" id="contact">
+      <div class="cta-inner">
+        <div>
+          <h2>Bring these ideas into your enterprise roadmap.</h2>
+          <p>Speak with Truflux Technologies about building AI-ready data foundations, modernization roadmaps, and governance-led enterprise platforms.</p>
+        </div>
+        <button class="btn btn-primary consultation-btn" data-request="Contact Truflux">Contact Truflux</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="leadModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <button class="close-btn" id="closeModal" aria-label="Close form">×</button>
+        <h2 id="modalTitle">Download Whitepaper</h2>
+        <p id="modalSubtitle">Please share a few details to access this Truflux insight.</p>
+      </div>
+
+      <form class="lead-form" id="leadForm">
+        <input type="hidden" id="selectedPaper" name="whitepaper" />
+        <input type="hidden" id="selectedFile" name="downloadFile" />
+
+        <div class="form-field"><label for="name">Full Name</label><input id="name" name="name" type="text" placeholder="Enter your name" required /></div>
+        <div class="form-field"><label for="email">Email ID</label><input id="email" name="email" type="email" placeholder="name@company.com" required /></div>
+        <div class="form-field">
+          <label for="industry">Industry</label>
+          <select id="industry" name="industry" required>
+            <option value="">Select industry</option>
+            <option>Banking, Financial Services & Insurance</option>
+            <option>Manufacturing</option>
+            <option>Retail & Consumer Goods</option>
+            <option>Healthcare & Life Sciences</option>
+            <option>Technology / SaaS</option>
+            <option>Energy & Utilities</option>
+            <option>Government / Public Sector</option>
+            <option>Education</option>
+            <option>Media & Entertainment</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-field"><label for="title">Job Title</label><input id="title" name="title" type="text" placeholder="CIO, CTO, Head of Data..." required /></div>
+        <div class="form-field full">
+          <label for="interest">Area of Interest</label>
+          <select id="interest" name="interest" required>
+            <option value="">Select area of interest</option>
+            <option>Data Democratization</option>
+            <option>Enterprise AI Strategy</option>
+            <option>Model Routing & AI Cost Optimization</option>
+            <option>Code Modernization</option>
+            <option>Sovereign Data & Governance</option>
+            <option>Data Platforms & Architecture</option>
+            <option>AI Transformation Roadmap</option>
+            <option>Technology Advisory / Consulting</option>
+          </select>
+        </div>
+
+        <p class="form-note">By submitting this form, you agree that Truflux Technologies may contact you regarding relevant insights, advisory conversations, and enterprise technology services.</p>
+        <p class="form-status" id="formStatus" aria-live="polite"></p>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelForm">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitLeadButton">Submit & Unlock Download</button>
+        </div>
+      </form>
+
+      <div class="success-state" id="successState">
+        <div class="success-icon">✓</div>
+        <h3 id="successTitle">Thank you</h3>
+        <p id="successMessage">Your whitepaper is ready. Click below to download the selected Truflux insight.</p>
+        <a class="btn btn-primary" id="finalDownload" href="#" download>Download Whitepaper</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal" id="reportModal" aria-hidden="true">
+    <div class="modal-card report-card" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <div class="modal-head">
+        <button class="close-btn" id="closeReports" aria-label="Close reports">×</button>
+        <h2 id="reportTitle">Truflux Reports</h2>
+        <p>Password-protected view of leads and whitepaper download activity from SQLite.</p>
+      </div>
+
+      <form class="report-login" id="reportLogin">
+        <div class="form-field full">
+          <label for="reportPassword">Report Password</label>
+          <input id="reportPassword" type="password" placeholder="Enter admin password" required />
+        </div>
+        <p class="form-status" id="reportStatus" aria-live="polite"></p>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">View Reports</button>
+        </div>
+      </form>
+
+      <div class="report-content" id="reportContent">
+        <div class="report-actions">
+          <button class="btn btn-secondary" id="refreshReports">Refresh</button>
+          <a class="btn btn-secondary" id="downloadLeadsCsv" href="#">Download Leads CSV</a>
+          <a class="btn btn-secondary" id="downloadEventsCsv" href="#">Download Downloads CSV</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong id="leadCount">0</strong><span>Total Leads</span></div>
+          <div class="stat"><strong id="downloadCount">0</strong><span>Download Clicks</span></div>
+          <div class="stat"><strong id="uniqueLeadEmails">0</strong><span>Unique Lead Emails</span></div>
+          <div class="stat"><strong id="uniqueDownloadEmails">0</strong><span>Unique Download Emails</span></div>
+        </div>
+
+        <h3 class="report-section-title">Whitepaper Summary</h3>
+        <div class="table-wrap"><table id="summaryTable"></table></div>
+
+        <h3 class="report-section-title">Recent Leads</h3>
+        <div class="table-wrap"><table id="leadsTable"></table></div>
+
+        <h3 class="report-section-title">Recent Download Clicks</h3>
+        <div class="table-wrap"><table id="eventsTable"></table></div>
+      </div>
+    </div>
+  </div>
+
+
+  <footer>
+    <span>© 2026 Truflux Technologies Private Limited. All rights reserved.</span>
+    <span>Enterprise platforms • Data intelligence • AI transformation • <button class="login-link" id="footerLogin">Login</button></span>
+  </footer>
+
+  <script>
+    const API_ENDPOINT = '/api/leads';
+    const DOWNLOAD_EVENT_ENDPOINT = '/api/download-events';
+    let lastSubmittedLead = null;
+    let reportKey = '';
+    const modal = document.getElementById('leadModal');
+    const leadForm = document.getElementById('leadForm');
+    const successState = document.getElementById('successState');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = document.getElementById('modalSubtitle');
+    const selectedPaper = document.getElementById('selectedPaper');
+    const selectedFile = document.getElementById('selectedFile');
+    const finalDownload = document.getElementById('finalDownload');
+    const successTitle = document.getElementById('successTitle');
+    const successMessage = document.getElementById('successMessage');
+    const formStatus = document.getElementById('formStatus');
+    const submitLeadButton = document.getElementById('submitLeadButton');
+    const reportModal = document.getElementById('reportModal');
+    const reportLogin = document.getElementById('reportLogin');
+    const reportPassword = document.getElementById('reportPassword');
+    const reportStatus = document.getElementById('reportStatus');
+    const reportContent = document.getElementById('reportContent');
+
+    function openModal(paper, file, mode = 'download') {
+      leadForm.dataset.mode = mode;
+      leadForm.reset();
+      selectedPaper.value = paper;
+      selectedFile.value = file || '';
+      modalTitle.textContent = paper;
+      modalSubtitle.textContent = mode === 'consultation'
+        ? 'Please share a few details and the Truflux team will connect with you.'
+        : 'Please share a few details to access this Truflux insight.';
+
+      if (mode === 'download') {
+        finalDownload.href = file;
+        finalDownload.setAttribute('download', file.split('/').pop());
+        finalDownload.style.display = 'inline-flex';
+        successTitle.textContent = 'Thank you';
+        successMessage.textContent = 'Your whitepaper is ready. Click below to download the selected Truflux insight.';
+        submitLeadButton.textContent = 'Submit & Unlock Download';
+      } else {
+        finalDownload.removeAttribute('download');
+        finalDownload.href = '#';
+        finalDownload.style.display = 'none';
+        successTitle.textContent = 'Thank you';
+        successMessage.textContent = 'Truflux Execs will get in touch shortly.';
+        submitLeadButton.textContent = 'Submit Request';
+      }
+
+      clearStatus();
+      leadForm.classList.remove('hidden');
+      successState.classList.remove('active');
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function clearStatus() {
+      formStatus.textContent = '';
+      formStatus.className = 'form-status';
+    }
+
+    function showStatus(message, type = 'error') {
+      formStatus.textContent = message;
+      formStatus.className = `form-status active ${type}`;
+    }
+
+    function buildLeadPayload() {
+      const formData = new FormData(leadForm);
+      const lead = Object.fromEntries(formData.entries());
+      lead.requestType = leadForm.dataset.mode === 'consultation' ? 'Consultation Request' : 'Whitepaper Download';
+      lead.createdAt = new Date().toISOString();
+      return lead;
+    }
+
+    function validateLead(lead) {
+      const requiredFields = ['name', 'email', 'industry', 'title', 'interest', 'requestType', 'createdAt'];
+      const missingFields = requiredFields.filter(field => !lead[field] || String(lead[field]).trim() === '');
+      const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email || '');
+      if (missingFields.length > 0) return { ok: false, message: `Please fill: ${missingFields.join(', ')}` };
+      if (!emailLooksValid) return { ok: false, message: 'Please enter a valid email address.' };
+      return { ok: true };
+    }
+
+    async function postLeadToBackend(lead) {
+      const response = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(lead)
+      });
+      const responseBody = await response.json().catch(() => null);
+      if (!response.ok || (responseBody && responseBody.ok === false)) {
+        const serverMessage = responseBody && responseBody.message ? responseBody.message : `Server returned ${response.status}`;
+        throw new Error(serverMessage);
+      }
+      return responseBody || { ok: true };
+    }
+
+    async function submitLead(lead) {
+      const validation = validateLead(lead);
+      if (!validation.ok) return { ok: false, message: validation.message };
+      const backendResponse = await postLeadToBackend(lead);
+      return { ok: true, leadId: backendResponse.leadId || null, lead };
+    }
+
+    function showSuccess(result) {
+      lastSubmittedLead = {
+        ...(result.lead || {}),
+        leadId: result.leadId || null
+      };
+      leadForm.classList.add('hidden');
+      successState.classList.add('active');
+    }
+
+    async function trackWhitepaperDownload() {
+      if (!lastSubmittedLead || leadForm.dataset.mode !== 'download') return;
+
+      const eventPayload = {
+        leadId: lastSubmittedLead.leadId,
+        name: lastSubmittedLead.name,
+        email: lastSubmittedLead.email,
+        whitepaper: lastSubmittedLead.whitepaper,
+        downloadFile: lastSubmittedLead.downloadFile,
+        eventType: 'Whitepaper Download Click',
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        const response = await fetch(DOWNLOAD_EVENT_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(eventPayload)
+        });
+
+        if (!response.ok) {
+          const body = await response.json().catch(() => null);
+          throw new Error(body?.message || `Download tracking failed with status ${response.status}`);
+        }
+      } catch (error) {
+        console.warn('Download tracking failed:', error.message);
+      }
+    }
+
+
+    function showReportStatus(message, type = 'error') {
+      reportStatus.textContent = message;
+      reportStatus.className = `form-status active ${type}`;
+    }
+
+    function clearReportStatus() {
+      reportStatus.textContent = '';
+      reportStatus.className = 'form-status';
+    }
+
+    function openReports() {
+      reportModal.classList.add('active');
+      reportModal.setAttribute('aria-hidden', 'false');
+      reportLogin.classList.remove('hidden');
+      reportContent.classList.remove('active');
+      clearReportStatus();
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => reportPassword.focus(), 100);
+    }
+
+    function closeReports() {
+      reportModal.classList.remove('active');
+      reportModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    async function adminFetch(path) {
+      const response = await fetch(path, {
+        headers: { 'x-admin-key': reportKey }
+      });
+      const body = await response.json().catch(() => null);
+      if (!response.ok || !body?.ok) {
+        throw new Error(body?.message || 'Unable to load report.');
+      }
+      return body;
+    }
+
+    function setDownloadLinks() {
+      const encodedKey = encodeURIComponent(reportKey);
+      document.getElementById('downloadLeadsCsv').href = `/api/export/leads.csv?key=${encodedKey}`;
+      document.getElementById('downloadEventsCsv').href = `/api/export/download-events.csv?key=${encodedKey}`;
+    }
+
+    function renderTable(tableId, columns, rows) {
+      const table = document.getElementById(tableId);
+      const thead = `<thead><tr>${columns.map(c => `<th>${c.label}</th>`).join('')}</tr></thead>`;
+      const tbody = rows.length
+        ? `<tbody>${rows.map(row => `<tr>${columns.map(c => `<td>${row[c.key] ?? ''}</td>`).join('')}</tr>`).join('')}</tbody>`
+        : `<tbody><tr><td colspan="${columns.length}">No records found.</td></tr></tbody>`;
+      table.innerHTML = thead + tbody;
+    }
+
+    async function loadReports() {
+      const [summary, leads, events] = await Promise.all([
+        adminFetch('/api/summary'),
+        adminFetch('/api/leads'),
+        adminFetch('/api/download-events')
+      ]);
+
+      document.getElementById('leadCount').textContent = summary.leadCount ?? 0;
+      document.getElementById('downloadCount').textContent = summary.downloadCount ?? 0;
+      document.getElementById('uniqueLeadEmails').textContent = summary.uniqueLeadEmails ?? 0;
+      document.getElementById('uniqueDownloadEmails').textContent = summary.uniqueDownloadEmails ?? 0;
+
+      renderTable('summaryTable', [
+        { key: 'whitepaper', label: 'Whitepaper' },
+        { key: 'downloads', label: 'Downloads' },
+        { key: 'uniqueEmails', label: 'Unique Emails' }
+      ], summary.byWhitepaper || []);
+
+      renderTable('leadsTable', [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'industry', label: 'Industry' },
+        { key: 'title', label: 'Title' },
+        { key: 'interest', label: 'Interest' },
+        { key: 'whitepaper', label: 'Whitepaper' },
+        { key: 'requestType', label: 'Type' },
+        { key: 'insertedAt', label: 'Captured At' }
+      ], leads.leads || []);
+
+      renderTable('eventsTable', [
+        { key: 'id', label: 'ID' },
+        { key: 'leadId', label: 'Lead ID' },
+        { key: 'name', label: 'Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'whitepaper', label: 'Whitepaper' },
+        { key: 'eventType', label: 'Event' },
+        { key: 'insertedAt', label: 'Clicked At' }
+      ], events.events || []);
+
+      setDownloadLinks();
+    }
+
+
+    document.querySelectorAll('.download').forEach(button => {
+      button.addEventListener('click', () => openModal(button.dataset.paper, button.dataset.file, 'download'));
+    });
+
+    document.querySelectorAll('.consultation-btn').forEach(button => {
+      button.addEventListener('click', () => openModal(button.dataset.request, '', 'consultation'));
+    });
+
+    finalDownload.addEventListener('click', trackWhitepaperDownload);
+
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('cancelForm').addEventListener('click', closeModal);
+    document.getElementById('footerLogin').addEventListener('click', openReports);
+    document.getElementById('closeReports').addEventListener('click', closeReports);
+    document.getElementById('refreshReports').addEventListener('click', loadReports);
+    modal.addEventListener('click', event => { if (event.target === modal) closeModal(); });
+    reportModal.addEventListener('click', event => { if (event.target === reportModal) closeReports(); });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        if (modal.classList.contains('active')) closeModal();
+        if (reportModal.classList.contains('active')) closeReports();
+      }
+    });
+
+    leadForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      clearStatus();
+      const originalButtonText = submitLeadButton.textContent;
+      submitLeadButton.disabled = true;
+      submitLeadButton.textContent = 'Submitting...';
+
+      try {
+        const lead = buildLeadPayload();
+        const result = await submitLead(lead);
+        if (result.ok) showSuccess(result);
+      } catch (error) {
+        showStatus(error.message || 'Unable to submit the form right now.', 'error');
+      } finally {
+        submitLeadButton.disabled = false;
+        submitLeadButton.textContent = originalButtonText;
+      }
+    });
+
+
+    reportLogin.addEventListener('submit', async event => {
+      event.preventDefault();
+      clearReportStatus();
+      reportKey = reportPassword.value.trim();
+
+      try {
+        await loadReports();
+        reportLogin.classList.add('hidden');
+        reportContent.classList.add('active');
+      } catch (error) {
+        showReportStatus('Invalid password or unable to load report.', 'error');
+      }
+    });
+
+
+    function runLeadFormTests() {
+      const validLead = {
+        name: 'Test User',
+        email: 'test@example.com',
+        industry: 'Technology / SaaS',
+        title: 'CIO',
+        interest: 'Enterprise AI Strategy',
+        requestType: 'Whitepaper Download',
+        createdAt: new Date().toISOString()
+      };
+      console.assert(validateLead(validLead).ok === true, 'Valid lead should pass validation');
+      console.assert(validateLead({ ...validLead, email: 'bad-email' }).ok === false, 'Invalid email should fail validation');
+      console.assert(validateLead({ ...validLead, name: '' }).ok === false, 'Missing name should fail validation');
+      console.assert(validateLead({ ...validLead, requestType: 'Consultation Request' }).ok === true, 'Consultation lead should pass');
+      console.assert(typeof trackWhitepaperDownload === 'function', 'Download tracking function should exist');
+      console.assert(typeof loadReports === 'function', 'Report loading function should exist');
+    }
+    runLeadFormTests();
+  </script>
+</body>
+</html>
