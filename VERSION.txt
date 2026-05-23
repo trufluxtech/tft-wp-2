@@ -1,5 +1,3 @@
 Truflux Whitepapers Clean Install
-Version: v1.4.1
-Email: Removed
-Reports: Password-protected inside index.html
-Style: Featured section white/blue text update
+Version: v1.4.2
+Change: Data Democratization Executive Summary title forced to white font.
