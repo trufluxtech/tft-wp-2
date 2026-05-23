@@ -94,6 +94,26 @@
     .success-state h3 { margin: 0 0 10px; font-size: 28px; letter-spacing: -.04em; }
     .success-state p { color: #617089; line-height: 1.65; margin: 0 0 22px; }
     footer { padding-top: 32px; padding-bottom: 44px; color: #728096; display: flex; justify-content: space-between; gap: 20px; font-size: 14px; }
+
+    .login-link { color: #075fbc; font-weight: 800; text-decoration: none; border: 0; background: transparent; cursor: pointer; font: inherit; }
+    .modal-card.report-card { width: min(1120px, 100%); max-height: 92vh; overflow: auto; }
+    .report-login { padding: 28px 30px 30px; display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .report-login.hidden { display: none; }
+    .report-content { display: none; padding: 26px 30px 30px; }
+    .report-content.active { display: block; }
+    .report-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+    .report-actions .btn-secondary { color: #07111f; border-color: #d9e2ee; background: #fff; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    .stat { background: #f6f8ff; border: 1px solid #e5e9fb; border-radius: 18px; padding: 16px; }
+    .stat strong { display: block; font-size: 28px; letter-spacing: -.04em; color: #07111f; }
+    .stat span { color: #617089; font-size: 13px; }
+    .report-section-title { margin: 26px 0 10px; font-size: 21px; color: #07111f; }
+    .table-wrap { overflow: auto; border: 1px solid #e5e9fb; border-radius: 18px; margin: 14px 0 28px; }
+    table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 13px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid #eef1fb; text-align: left; vertical-align: top; }
+    th { background: #f6f8ff; color: #102f53; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    td { color: #46506e; }
+
     @media (max-width: 920px) {
       .hero, .grid { grid-template-columns: 1fr; }
       .feature-card { grid-column: span 1; }
@@ -254,15 +274,63 @@
     </div>
   </div>
 
+
+  <div class="modal" id="reportModal" aria-hidden="true">
+    <div class="modal-card report-card" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <div class="modal-head">
+        <button class="close-btn" id="closeReports" aria-label="Close reports">×</button>
+        <h2 id="reportTitle">Truflux Reports</h2>
+        <p>Password-protected view of leads and whitepaper download activity from SQLite.</p>
+      </div>
+
+      <form class="report-login" id="reportLogin">
+        <div class="form-field full">
+          <label for="reportPassword">Report Password</label>
+          <input id="reportPassword" type="password" placeholder="Enter admin password" required />
+        </div>
+        <p class="form-status" id="reportStatus" aria-live="polite"></p>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">View Reports</button>
+        </div>
+      </form>
+
+      <div class="report-content" id="reportContent">
+        <div class="report-actions">
+          <button class="btn btn-secondary" id="refreshReports">Refresh</button>
+          <a class="btn btn-secondary" id="downloadLeadsCsv" href="#">Download Leads CSV</a>
+          <a class="btn btn-secondary" id="downloadEventsCsv" href="#">Download Downloads CSV</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><strong id="leadCount">0</strong><span>Total Leads</span></div>
+          <div class="stat"><strong id="downloadCount">0</strong><span>Download Clicks</span></div>
+          <div class="stat"><strong id="uniqueLeadEmails">0</strong><span>Unique Lead Emails</span></div>
+          <div class="stat"><strong id="uniqueDownloadEmails">0</strong><span>Unique Download Emails</span></div>
+        </div>
+
+        <h3 class="report-section-title">Whitepaper Summary</h3>
+        <div class="table-wrap"><table id="summaryTable"></table></div>
+
+        <h3 class="report-section-title">Recent Leads</h3>
+        <div class="table-wrap"><table id="leadsTable"></table></div>
+
+        <h3 class="report-section-title">Recent Download Clicks</h3>
+        <div class="table-wrap"><table id="eventsTable"></table></div>
+      </div>
+    </div>
+  </div>
+
+
   <footer>
     <span>© 2026 Truflux Technologies Private Limited. All rights reserved.</span>
-    <span>Enterprise platforms • Data intelligence • AI transformation • Login</span>
+    <span>Enterprise platforms • Data intelligence • AI transformation • <button class="login-link" id="footerLogin">Login</button></span>
   </footer>
 
   <script>
     const API_ENDPOINT = '/api/leads';
     const DOWNLOAD_EVENT_ENDPOINT = '/api/download-events';
     let lastSubmittedLead = null;
+    let reportKey = '';
     const modal = document.getElementById('leadModal');
     const leadForm = document.getElementById('leadForm');
     const successState = document.getElementById('successState');
@@ -275,6 +343,11 @@
     const successMessage = document.getElementById('successMessage');
     const formStatus = document.getElementById('formStatus');
     const submitLeadButton = document.getElementById('submitLeadButton');
+    const reportModal = document.getElementById('reportModal');
+    const reportLogin = document.getElementById('reportLogin');
+    const reportPassword = document.getElementById('reportPassword');
+    const reportStatus = document.getElementById('reportStatus');
+    const reportContent = document.getElementById('reportContent');
 
     function openModal(paper, file, mode = 'download') {
       leadForm.dataset.mode = mode;
@@ -402,6 +475,103 @@
       }
     }
 
+
+    function showReportStatus(message, type = 'error') {
+      reportStatus.textContent = message;
+      reportStatus.className = `form-status active ${type}`;
+    }
+
+    function clearReportStatus() {
+      reportStatus.textContent = '';
+      reportStatus.className = 'form-status';
+    }
+
+    function openReports() {
+      reportModal.classList.add('active');
+      reportModal.setAttribute('aria-hidden', 'false');
+      reportLogin.classList.remove('hidden');
+      reportContent.classList.remove('active');
+      clearReportStatus();
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => reportPassword.focus(), 100);
+    }
+
+    function closeReports() {
+      reportModal.classList.remove('active');
+      reportModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    async function adminFetch(path) {
+      const response = await fetch(path, {
+        headers: { 'x-admin-key': reportKey }
+      });
+      const body = await response.json().catch(() => null);
+      if (!response.ok || !body?.ok) {
+        throw new Error(body?.message || 'Unable to load report.');
+      }
+      return body;
+    }
+
+    function setDownloadLinks() {
+      const encodedKey = encodeURIComponent(reportKey);
+      document.getElementById('downloadLeadsCsv').href = `/api/export/leads.csv?key=${encodedKey}`;
+      document.getElementById('downloadEventsCsv').href = `/api/export/download-events.csv?key=${encodedKey}`;
+    }
+
+    function renderTable(tableId, columns, rows) {
+      const table = document.getElementById(tableId);
+      const thead = `<thead><tr>${columns.map(c => `<th>${c.label}</th>`).join('')}</tr></thead>`;
+      const tbody = rows.length
+        ? `<tbody>${rows.map(row => `<tr>${columns.map(c => `<td>${row[c.key] ?? ''}</td>`).join('')}</tr>`).join('')}</tbody>`
+        : `<tbody><tr><td colspan="${columns.length}">No records found.</td></tr></tbody>`;
+      table.innerHTML = thead + tbody;
+    }
+
+    async function loadReports() {
+      const [summary, leads, events] = await Promise.all([
+        adminFetch('/api/summary'),
+        adminFetch('/api/leads'),
+        adminFetch('/api/download-events')
+      ]);
+
+      document.getElementById('leadCount').textContent = summary.leadCount ?? 0;
+      document.getElementById('downloadCount').textContent = summary.downloadCount ?? 0;
+      document.getElementById('uniqueLeadEmails').textContent = summary.uniqueLeadEmails ?? 0;
+      document.getElementById('uniqueDownloadEmails').textContent = summary.uniqueDownloadEmails ?? 0;
+
+      renderTable('summaryTable', [
+        { key: 'whitepaper', label: 'Whitepaper' },
+        { key: 'downloads', label: 'Downloads' },
+        { key: 'uniqueEmails', label: 'Unique Emails' }
+      ], summary.byWhitepaper || []);
+
+      renderTable('leadsTable', [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'industry', label: 'Industry' },
+        { key: 'title', label: 'Title' },
+        { key: 'interest', label: 'Interest' },
+        { key: 'whitepaper', label: 'Whitepaper' },
+        { key: 'requestType', label: 'Type' },
+        { key: 'insertedAt', label: 'Captured At' }
+      ], leads.leads || []);
+
+      renderTable('eventsTable', [
+        { key: 'id', label: 'ID' },
+        { key: 'leadId', label: 'Lead ID' },
+        { key: 'name', label: 'Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'whitepaper', label: 'Whitepaper' },
+        { key: 'eventType', label: 'Event' },
+        { key: 'insertedAt', label: 'Clicked At' }
+      ], events.events || []);
+
+      setDownloadLinks();
+    }
+
+
     document.querySelectorAll('.download').forEach(button => {
       button.addEventListener('click', () => openModal(button.dataset.paper, button.dataset.file, 'download'));
     });
@@ -414,8 +584,17 @@
 
     document.getElementById('closeModal').addEventListener('click', closeModal);
     document.getElementById('cancelForm').addEventListener('click', closeModal);
+    document.getElementById('footerLogin').addEventListener('click', openReports);
+    document.getElementById('closeReports').addEventListener('click', closeReports);
+    document.getElementById('refreshReports').addEventListener('click', loadReports);
     modal.addEventListener('click', event => { if (event.target === modal) closeModal(); });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+    reportModal.addEventListener('click', event => { if (event.target === reportModal) closeReports(); });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        if (modal.classList.contains('active')) closeModal();
+        if (reportModal.classList.contains('active')) closeReports();
+      }
+    });
 
     leadForm.addEventListener('submit', async event => {
       event.preventDefault();
@@ -436,6 +615,22 @@
       }
     });
 
+
+    reportLogin.addEventListener('submit', async event => {
+      event.preventDefault();
+      clearReportStatus();
+      reportKey = reportPassword.value.trim();
+
+      try {
+        await loadReports();
+        reportLogin.classList.add('hidden');
+        reportContent.classList.add('active');
+      } catch (error) {
+        showReportStatus('Invalid password or unable to load report.', 'error');
+      }
+    });
+
+
     function runLeadFormTests() {
       const validLead = {
         name: 'Test User',
@@ -451,6 +646,7 @@
       console.assert(validateLead({ ...validLead, name: '' }).ok === false, 'Missing name should fail validation');
       console.assert(validateLead({ ...validLead, requestType: 'Consultation Request' }).ok === true, 'Consultation lead should pass');
       console.assert(typeof trackWhitepaperDownload === 'function', 'Download tracking function should exist');
+      console.assert(typeof loadReports === 'function', 'Report loading function should exist');
     }
     runLeadFormTests();
   </script>
