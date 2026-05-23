@@ -65,7 +65,7 @@ function csv(rows, fallbackCols){
  return [cols.join(","),...rows.map(r=>cols.map(c=>JSON.stringify(r[c]??"")).join(","))].join("\n");
 }
 
-app.get("/api/health",(_req,res)=>res.json({ok:true,service:"truflux-whitepapers-clean",version:"1.4.2",emailIntegration:false}));
+app.get("/api/health",(_req,res)=>res.json({ok:true,service:"truflux-whitepapers-clean",version:"1.4.1",emailIntegration:false}));
 app.post("/api/leads",(req,res)=>{
  const v=validateLead(req.body); if(!v.ok) return res.status(v.status).json({ok:false,message:v.message});
  const lead={...v.lead,userAgent:ua(req),ipAddress:ip(req)};
@@ -106,6 +106,6 @@ app.get("/api/export/download-events.csv",requireAdmin,(_req,res)=>{
 app.get("*",(_req,res)=>res.sendFile(path.join(__dirname,"public","index.html")));
 
 if(require.main===module){
- app.listen(PORT,"0.0.0.0",()=>console.log(`Truflux clean v1.4.2 running on port ${PORT}. Email removed; SQLite only.`));
+ app.listen(PORT,"0.0.0.0",()=>console.log(`Truflux clean v1.4.1 running on port ${PORT}. Email removed; SQLite only.`));
 }
 module.exports={app,validateLead,validateDownloadEvent};

@@ -1,4 +1,4 @@
-# Truflux Whitepapers Clean Install v1.4.2
+# Truflux Whitepapers Clean Install v1.4.1
 
 No email integration. Everything is captured in SQLite.
 
