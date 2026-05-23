@@ -1,4 +1,5 @@
 Truflux Whitepapers Clean Install
-Version: v1.4.0
+Version: v1.4.1
 Email: Removed
 Reports: Password-protected inside index.html
+Style: Featured section white/blue text update
